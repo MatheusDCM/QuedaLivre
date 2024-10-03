@@ -1,6 +1,26 @@
 let intervalo;
 let emQueda = false;
 let pausado = false;
+let arrastando = false;
+
+const objeto = document.getElementById('objeto');
+
+objeto.addEventListener('mousedown', (e) => {
+    arrastando = true;
+    objeto.style.cursor = 'grabbing';
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (arrastando && !emQueda) {
+        objeto.style.left = `${e.clientX - objeto.offsetWidth / 2}px`;
+        objeto.style.top = `${e.clientY - objeto.offsetHeight / 2}px`;
+    }
+});
+
+document.addEventListener('mouseup', () => {
+    arrastando = false;
+    objeto.style.cursor = 'grab';
+});
 
 function Queda() {
     if (emQueda) {
@@ -11,25 +31,24 @@ function Queda() {
 }
 
 function iniciarQueda() {
-    const objeto = document.getElementById('objeto');
-    let altura = 0; 
+    let altura = 0;
     const g = 9.8;
     let tempo = 0;
-    const maxAltura = 300; 
-    
+    const maxAltura = 300;
+
     intervalo = setInterval(() => {
         if (!pausado) {
             tempo += 0.05;
-            altura = 0.5 * g * Math.pow(tempo, 2); 
+            altura = 0.5 * g * Math.pow(tempo, 2);
 
             if (altura > maxAltura) {
-                altura = maxAltura; 
+                altura = maxAltura;
             }
 
             const velocidade = g * tempo;
-            objeto.style.top = (100 + altura) + 'px'; 
+            objeto.style.top = (100 + altura) + 'px';
             document.getElementById('info').innerText = `Altura: ${altura.toFixed(2)} m | Tempo: ${tempo.toFixed(2)} s | Velocidade: ${velocidade.toFixed(2)} m/s`;
-            
+
             if (altura >= maxAltura) {
                 clearInterval(intervalo);
                 emQueda = false;
@@ -48,8 +67,7 @@ function pausar() {
 
 function reiniciar() {
     clearInterval(intervalo);
-    const objeto = document.getElementById('objeto');
-    objeto.style.top = '100px'; 
+    objeto.style.top = '100px';
     document.getElementById('info').innerText = '';
     emQueda = false;
     pausado = false;
